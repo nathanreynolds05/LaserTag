@@ -1,60 +1,63 @@
-import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.net.URL;
+import javax.imageio.ImageIO;
+import javax.swing.*;
 
+public class SplashScreen extends JWindow {
+    private BufferedImage newPhotonImage;
 
-public class SplashScreen {
-
-    private void createAndShowGUI() {
-        // Create a JFrame for the splash screen
-        JFrame splashFrame = new JFrame("Splash Screen");
-        splashFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        splashFrame.setSize(1800, 1000);
-
-        String logoUrl = "https://github.com/jstrother123/photon-main/blob/main/logo.jpg?raw=true";
-       
-        
-
-        try { //I had an unhandle exception so I had to have a try catch for it to run
-            URL url = new URL(logoUrl);
-            // Create a JLabel to display the image
-            ImageIcon splashImageIcon = new ImageIcon(url); //
-            JLabel splashLabel = new JLabel(splashImageIcon);
-
-            // Add the label to the frame
-            splashFrame.add(splashLabel);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        // Center the splash screen on the screen
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        int x = (screenSize.width - splashFrame.getWidth()) / 2;
-        int y = (screenSize.height - splashFrame.getHeight()) / 2;
-        splashFrame.setLocation(x, y);
-
-        // Set the visibility of the splash screen
-        splashFrame.setVisible(true);
-
-        // load image
+    public SplashScreen() {
         try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
+            // Load the original image
+            URL url = new URL("https://github.com/jstrother123/photon-main/blob/main/logo.jpg?raw=true");
+            BufferedImage originalPhotonImage = ImageIO.read(url);
+
+            // Desired width and height for the resized image
+            int photonImageWidth = 1800;
+            int photonImageHeight = 1000;
+
+            // Create a new BufferedImage
+            newPhotonImage = new BufferedImage(photonImageWidth, photonImageHeight, BufferedImage.TYPE_INT_ARGB);
+
+            // Draw the original image onto the new BufferedImage
+            Graphics2D g = newPhotonImage.createGraphics();
+            g.drawImage(originalPhotonImage, 0, 0, photonImageWidth, photonImageHeight, null);
+            g.dispose();
+
+            // Set JWindow size with new image width and height
+            setSize(photonImageWidth, photonImageHeight);
+
+            // Get current screen size
+            Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+
+            // Center the JWindow on the screen
+            int x = (screenSize.width - getSize().width) / 2;
+            int y = (screenSize.height - getSize().height) / 2;
+            setLocation(x, y);
+
+            // Make the JWindow visible
+            setVisible(true);
+        } catch (IOException e) {
             e.printStackTrace();
         }
+    }
 
-        // Close the splash screen and proceed to main 
-        splashFrame.dispose();
-
-        // start main program after this
-        
+    // Paint resized image onto JWindow
+    public void paint(Graphics g) {
+        super.paint(g);
+        g.drawImage(newPhotonImage, 0, 0, this);
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            SplashScreen example = new SplashScreen();
-            example.createAndShowGUI();
-        });
+        SplashScreen splash = new SplashScreen();
+        try {
+            // Make photon image appear for 3 seconds before disappearing
+            Thread.sleep(3000);
+            splash.dispose();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }
