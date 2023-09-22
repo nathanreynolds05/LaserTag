@@ -37,14 +37,14 @@ public class SplashScreen {
         // Set the visibility of the splash screen
         splashFrame.setVisible(true);
 
-        // Simulate some initialization/loading time (e.g., 3 seconds)
+        // load image
         try {
             Thread.sleep(3000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
-        // Close the splash screen and proceed to the main application
+        // Close the splash screen and proceed to main 
         splashFrame.dispose();
 
         // start main program after this
