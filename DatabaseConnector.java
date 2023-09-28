@@ -37,8 +37,6 @@ public class DatabaseConnector {
             Statement stmt = Database_Connection.createStatement();
             stmt.executeUpdate("CREATE TABLE IF NOT EXISTS player (\r\n" + //
                 "  id INT PRIMARY KEY,\r\n" + //
-                "  first_name VARCHAR(30),\r\n" + //
-                "  last_name VARCHAR(30),\r\n" + //
                 "  codename VARCHAR(30) UNIQUE,\r\n" + //
                 "  CONSTRAINT name_unique UNIQUE (first_name, last_name)\r\n" + //
                 ");");
@@ -66,7 +64,7 @@ public class DatabaseConnector {
         if (!isConnected) throw new IllegalStateException("Not connected to database");
         try {
             Statement stmt = Database_Connection.createStatement();
-            stmt.executeUpdate("INSERT INTO player (id, first_name, last_name, codename) VALUES (" + player.getId() + ", '" + player.getFirstName() + "', '" + player.getLastName() + "', '" + player.getCodename() + "');");
+            stmt.executeUpdate("INSERT INTO player (id, first_name, last_name, codename) VALUES (" + player.getId() + ", '"+ player.getCodename() + "');");
             stmt.close();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -79,7 +77,7 @@ public class DatabaseConnector {
         if (!isConnected) throw new IllegalStateException("Not connected to database");
         try {
             Statement stmt = Database_Connection.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT * FROM player WHERE id = " + player.getId() + " OR codename = '" + player.getCodename() + "' OR (first_name = '" + player.getFirstName() + "' AND last_name = '" + player.getLastName() + "');");
+            ResultSet rs = stmt.executeQuery("SELECT * FROM player WHERE id = " + player.getId() + " OR codename = '" + player.getCodename() + "');");
             boolean foundResult = rs.next();
             rs.close();
             stmt.close();
@@ -119,7 +117,7 @@ public class DatabaseConnector {
             Player player = null;
             boolean foundResult = rs.next();
             if (foundResult)
-                player = new Player(rs.getInt("id"), rs.getString("first_name"), rs.getString("last_name"), rs.getString("codename"));
+                player = new Player(rs.getInt("id"), rs.getString("codename"));
             rs.close();
             stmt.close();
             if (!foundResult) return null;
@@ -129,25 +127,6 @@ public class DatabaseConnector {
             return null;
         }
 
-    }
-
-    public Player searchByRealName(String first_name, String last_name) throws IllegalStateException{
-        if (!isConnected) throw new IllegalStateException("Not connected to database");
-        try {
-            Statement stmt = Database_Connection.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT * FROM player WHERE first_name = '" + first_name + "' AND last_name = '" + last_name + "';");
-            Player player = null;
-            boolean foundResult = rs.next();
-            if (foundResult)
-                player = new Player(rs.getInt("id"), rs.getString("first_name"), rs.getString("last_name"), rs.getString("codename"));
-            rs.close();
-            stmt.close();
-            if (!foundResult) return null;
-            return player;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
-        }
     }
 
     public Player searchByID(int ID) throws IllegalStateException{
@@ -158,7 +137,7 @@ public class DatabaseConnector {
             Player player = null;
             boolean foundResult = rs.next();
             if (foundResult)
-                player = new Player(rs.getInt("id"), rs.getString("first_name"), rs.getString("last_name"), rs.getString("codename"));
+                player = new Player(rs.getInt("id"), rs.getString("codename"));
             rs.close();
             stmt.close();
             if (!foundResult) return null;
@@ -169,13 +148,45 @@ public class DatabaseConnector {
         }
     }
 
-    //This is for checking if a player exists in the database.
-    //This doesn't serve much of a purpose (most of the time you should use willConflict instead) but it might be useful for something.
+    //The following methods check to see if a player with the given properties exists in a database.
+    //You can either call this with a player object, in which case it will check if a player with the same ID and codename
+    //Or you can call with an id or codename, in which case it will check if a player with that id or codename exists.
+    //This is distinct from WillConflict, which returns false if either codename or id conflict.
     public boolean playerExists(Player player) throws IllegalStateException{
         if (!isConnected) throw new IllegalStateException("Not connected to database");
         try {
             Statement stmt = Database_Connection.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT * FROM player WHERE id = " + player.getId() + "AND first_name = '" + player.getFirstName() + "' AND last_name = '" + player.getLastName() + "' AND codename = '" + player.getCodename() + "';");
+            ResultSet rs = stmt.executeQuery("SELECT * FROM player WHERE id = " + player.getId() + " AND codename = '" + player.getCodename() + "';");
+            boolean foundResult = rs.next();
+            rs.close();
+            stmt.close();
+            return foundResult;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean playerExists(int id) throws IllegalStateException{
+        if (!isConnected) throw new IllegalStateException("Not connected to database");
+        try {
+            Statement stmt = Database_Connection.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT * FROM player WHERE id = " + id + " ;");
+            boolean foundResult = rs.next();
+            rs.close();
+            stmt.close();
+            return foundResult;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean playerExists(String codename) throws IllegalStateException{
+        if (!isConnected) throw new IllegalStateException("Not connected to database");
+        try {
+            Statement stmt = Database_Connection.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT * FROM player WHERE codename = '" + codename + "';");
             boolean foundResult = rs.next();
             rs.close();
             stmt.close();
@@ -191,7 +202,7 @@ public class DatabaseConnector {
         if (!isConnected) throw new IllegalStateException("Not connected to database");
         try {
             Statement stmt = Database_Connection.createStatement();
-            stmt.executeUpdate("DELETE FROM player WHERE id = " + player.getId() + " AND first_name = '" + player.getFirstName() + "' AND last_name = '" + player.getLastName() + "' AND codename = '" + player.getCodename() + "';");
+            stmt.executeUpdate("DELETE FROM player WHERE id = " + player.getId() + " ;");
             stmt.close();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -215,7 +226,7 @@ public class DatabaseConnector {
         if (!isConnected) throw new IllegalStateException("Not connected to database");
         try {
             Statement stmt = Database_Connection.createStatement();
-            stmt.executeUpdate("UPDATE player SET first_name = '" + player.getFirstName() + "', last_name = '" + player.getLastName() + "', codename = '" + player.getCodename() + "' WHERE id = " + player.getId() + " ;");
+            stmt.executeUpdate("UPDATE player SET codename = '" + player.getCodename() + "' WHERE id = " + player.getId() + " ;");
             stmt.close();
         } catch (SQLException e) {
             e.printStackTrace();
