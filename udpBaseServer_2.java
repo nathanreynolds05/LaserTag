@@ -6,9 +6,9 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 
-public class udpBaseServer_2
-{
-	public static void main(String[] args) throws IOException
+public class baseServer {
+	
+	public static void baseServerUDP() throws IOException
 	{
 		// Step 1 : Create a socket to listen at port 1234
 		DatagramSocket ds = new DatagramSocket(1234);
@@ -53,4 +53,5 @@ public class udpBaseServer_2
 		}
 		return ret;
 	}
+
 }
