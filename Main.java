@@ -4,11 +4,10 @@ import java.lang.String;
 
 public class Main 
 {
-	public static void main(String[] args)
+	public static void main(String[] args) throws IOException
 	{
-		//udpBaseServer_2 serverStart = new udpBaseServer_2();
-		//serverStart.serverStart();
 		SplashScreen splashScreen = new SplashScreen();
+		EntryScreen entryScreen = new EntryScreen();
 		try {
             // Make photon image appear for 3 seconds before disappearing
             Thread.sleep(3000);
@@ -17,8 +16,8 @@ public class Main
             e.printStackTrace();
         }
 
+		udpBaseServer_2.baseServer();
 	}
 
 
 }
-
