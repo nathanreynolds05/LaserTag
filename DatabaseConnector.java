@@ -37,8 +37,7 @@ public class DatabaseConnector {
             Statement stmt = Database_Connection.createStatement();
             stmt.executeUpdate("CREATE TABLE IF NOT EXISTS player (\r\n" + //
                 "  id INT PRIMARY KEY,\r\n" + //
-                "  codename VARCHAR(30) UNIQUE,\r\n" + //
-                "  CONSTRAINT name_unique UNIQUE (first_name, last_name)\r\n" + //
+                "  codename VARCHAR(30) UNIQUE\r\n" + //
                 ");");
             stmt.close();
             isConnected = true;
@@ -64,7 +63,7 @@ public class DatabaseConnector {
         if (!isConnected) throw new IllegalStateException("Not connected to database");
         try {
             Statement stmt = Database_Connection.createStatement();
-            stmt.executeUpdate("INSERT INTO player (id, first_name, last_name, codename) VALUES (" + player.getId() + ", '"+ player.getCodename() + "');");
+            stmt.executeUpdate("INSERT INTO player (id, codename) VALUES (" + player.getId() + ", '"+ player.getCodename() + "');");
             stmt.close();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -235,11 +234,11 @@ public class DatabaseConnector {
 
 
     //This is for testing. Leave it commented out.
-    /*public static void main(String[] args) {
+    public static void main(String[] args) {
         //test the class
         DatabaseConnector db = new DatabaseConnector();
         db.connect();
-        Player insert = new Player(1, "John", "Doe", "JD");
+        Player insert = new Player(1, "JD");
         db.addPlayer(insert);
         Player player = db.searchByID(2);
         if (player != null){
@@ -247,5 +246,5 @@ public class DatabaseConnector {
             db.deletePlayer(player);
         }
         db.disconnect();
-    }*/
+    }
 }
