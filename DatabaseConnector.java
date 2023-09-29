@@ -76,7 +76,7 @@ public class DatabaseConnector {
         if (!isConnected) throw new IllegalStateException("Not connected to database");
         try {
             Statement stmt = Database_Connection.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT * FROM player WHERE id = " + player.getId() + " OR codename = '" + player.getCodename() + "');");
+            ResultSet rs = stmt.executeQuery("SELECT * FROM player WHERE id = " + player.getId() + " OR codename = '" + player.getCodename() + "';");
             boolean foundResult = rs.next();
             rs.close();
             stmt.close();
@@ -234,17 +234,18 @@ public class DatabaseConnector {
 
 
     //This is for testing. Leave it commented out.
-    public static void main(String[] args) {
+    /*public static void main(String[] args) {
         //test the class
         DatabaseConnector db = new DatabaseConnector();
         db.connect();
-        Player insert = new Player(1, "JD");
-        db.addPlayer(insert);
+        //
+        db.getNewPlayerID();
+        db.willConflict(new Player(1, "test"));
         Player player = db.searchByID(2);
         if (player != null){
             System.out.println(player.toString());
             db.deletePlayer(player);
         }
         db.disconnect();
-    }
+    }*/
 }
