@@ -8,7 +8,7 @@ import java.util.Scanner;
 
 public class udpBaseClient_2
 {
-	public static void main(String args[]) throws IOException
+	public static void baseClient() throws IOException
 	{
 		Scanner sc = new Scanner(System.in);
 
