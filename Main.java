@@ -9,8 +9,6 @@ public class Main
 		//Create a SplashScreen Object
 		SplashScreen splashScreen = new SplashScreen();
 
-		//Creates an EntryScreen Object
-		EntryScreen entryScreen = new EntryScreen();
 
 		//Creates a DataBaseConnector Object
 		DatabaseConnector database = new DatabaseConnector("jdbc:postgresql://db.gkeebcixaqkelmnqriql.supabase.co:5432/postgres",
@@ -23,19 +21,28 @@ public class Main
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
+		//Creates an EntryScreen Object
+		EntryScreen entryScreen = new EntryScreen();
+
 		//Connect to the server
 		udpBaseServer_2.baseServer();
 
 		//Connect to the database
 		database.connect();
 
+		// Player player1 = new Player(1, "Jimmy", "Neutron", "Alpha");
+		// database.addPlayer(player1);
+
+		// database.searchByID(1);
+		// database.searchByID(2);
+
+
 	}
 
 
 }
-
 //To Do list:
 //1. We need to figure out how to connect the database with the entryscreen.
-//2. Need to find a way to delay the entry screen until after the splashscreen.
 
 
