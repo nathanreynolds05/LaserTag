@@ -20,12 +20,15 @@ public class EntryScreen implements ActionListener
     int iD;
     int equipID;
     String codeName;
+    String team;
+    boolean exists;
 
 
     EntryScreen()
     {
         gameState = 0;
         startGame = false;
+        exists = false;
         database = new DatabaseConnector();
         frame = new JFrame();
         panel = new JPanel();
@@ -63,8 +66,19 @@ public class EntryScreen implements ActionListener
     public void actionPerformed(ActionEvent e)
     {
         System.out.println("Button Pressed");
-        // Player player = new Player(Integer.parseInt(iDText.getText()), "test", "test", null);
-        // database.connect();
+        
+        // if(this.gameState == 0)
+        // {
+        //     Player player = new Player(Integer.parseInt(iDText.getText()), null);
+
+        //     if(database.willConflict(player))
+        //     {
+        //         System.out.println("Player has been added to the game");
+        //         gameState = 
+        //     }
+        // }
+        this.database.connect();
+        System.out.println("test");
         // if(database.willConflict(player))
         // {
         //     System.out.println("Player has been added to the game");
@@ -72,7 +86,7 @@ public class EntryScreen implements ActionListener
         // else
         // {
             this.gameState++;
-            System.out.println(gameState);
+            System.out.println(this.gameState);
             if(this.gameState == 0)
             {
                 this.enterID();
@@ -81,13 +95,29 @@ public class EntryScreen implements ActionListener
             {
                 try
                 {
-                    iD = Integer.parseInt(this.iDText.getText());
-                    this.enterCodeName();
+                    this.iD = Integer.parseInt(this.iDText.getText());
+                    if(this.database.searchByID(this.iD) == null)
+                    {
+                        this.iD = this.database.getNewPlayerID();
+                        
+                        System.out.println("Player not found. New ID given: " + this.iD);
+                        this.enterCodeName();
+                    }
+                    else
+                    {
+                        this.codeName = this.database.searchByID(this.iD).getCodename();
+                        this.exists = true;
+                        System.out.println("Player has been found. Your codename is " + this.codeName);
+                        gameState++;
+                        this.enterEquipID();
+                    }
+                    
 
                 }
                 catch(NumberFormatException exc)
                 {
                     System.out.println("Enter an integer");
+                    this.iDText.setText("");
                     this.gameState = 0;
                 }
             }
@@ -95,12 +125,21 @@ public class EntryScreen implements ActionListener
             {
                 try
                 {
-                    codeName = this.iDText.getText();
+                    if(exists)
+                    {
+                        
+                    }
+                    else
+                    {
+                        this.codeName = this.iDText.getText();
+                    }
+
                     this.enterEquipID();
                 }
                 catch(NumberFormatException exc)
                 {
                     System.out.println("Enter a string");
+                    this.iDText.setText("");
                     this.gameState = 1;
                 }
                 
@@ -109,20 +148,54 @@ public class EntryScreen implements ActionListener
             {
                 try
                 {
-                    equipID = Integer.parseInt(this.iDText.getText());
-                    this.enterID();
-                    gameState = 0;
+                    this.equipID = Integer.parseInt(this.iDText.getText());
+                    this.enterTeam();
+                    //this.gameState = 0;
                 }
                 catch(NumberFormatException exc)
                 {
                     System.out.println("Enter an integer");
+                    this.iDText.setText("");
                     this.gameState = 2;
                 }
-                
+            }
+            else if(this.gameState == 4)
+            {
+                try
+                {
+                    this.team = this.iDText.getText();
+
+                    if(!(this.team.toLowerCase().equals("red")) && !(this.team.toLowerCase().equals("green")))
+                    {
+                        System.out.println("Enter red or green");
+                        this.gameState = 3;
+                    }
+                    else
+                    {
+                        this.gameState = 0;
+                        if(exists)
+                        {
+                            exists = false;
+                        }
+                        else
+                        {
+                            Player newPlayer = new Player(this.iD, this.codeName);
+                            this.database.addPlayer(newPlayer);
+                        }
+                        
+                        this.enterID();
+                    }
+                }
+                catch(NumberFormatException exc)
+                {
+                    System.out.println("Enter red or green");
+                    this.iDText.setText("");
+                    this.gameState = 3;
+                }
             }
 
-        // }
-        // database.disconnect();
+        //}
+        database.disconnect();
     }
 
     public void enterID()
@@ -164,20 +237,26 @@ public class EntryScreen implements ActionListener
     {   
         this.label.setText("Equipment ID");
         this.label.setBounds(10,20,80,25);
-        this.panel.add(this.label);
+        //this.panel.add(this.label);
 
         this.iDText.setText("");
         this.iDText.setBounds(100, 20, 165, 25);
-        this.panel.add(this.iDText);
+        //this.panel.add(this.iDText);
 
         // this.button.setBounds(10,80,80,25);
         // this.button.addActionListener(this);
         // this.panel.add(this.button);
     }
 
-    public void repaint()
+    public void enterTeam()
     {
-        //if
+        this.label.setText("Team");
+        this.label.setBounds(10,20,80,25);
+        //this.panel.add(this.label);
+
+        this.iDText.setText("");
+        this.iDText.setBounds(100, 20, 165, 25);
+        //this.panel.add(this.iDText);
     }
 
     public static void main(String[] args)
