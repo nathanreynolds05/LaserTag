@@ -9,3 +9,14 @@ This program requires the postgresql-42.6.0.jar file found in the lib directory.
 USAGE INSTRUCTIONS
 -
 To add players, follow the prompts that appear after the splash screen. Once you have finished entering players, hit the f3 key to broadcast equipment codes.
+
+TEAM MEMBERS
+-
+
+| Real Name       | Github Username   |
+|-----------------|-------------------|
+| Ethan Talley    | OctarineHippo     |
+| Ernesto Sierra  | FleeboG           |
+| Dylan Baker     | dab023            |
+| Nathan Reynolds | nathanreynolds05  |
+| Zachary Morgan  | ZacharyMorganUARK |
