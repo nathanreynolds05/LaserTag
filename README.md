@@ -3,8 +3,8 @@
 INSTALLATION INSTRUCTIONS
 -
 Requires Java.  
-Pull from the repository, then compile and run in your favorite java setup. 
-This program requires the postgresql-42.6.0.jar file found in the lib directory. Make sure to add it to your class path.  
+Pull from the repository and navigate to the directory you've placed it in.  
+Run "javac \*java", then "java -cp ".;lib/* Main"
 
 USAGE INSTRUCTIONS
 -
