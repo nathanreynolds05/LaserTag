@@ -1,13 +1,27 @@
 //import javax.print.attribute.standard.JobKOctetsSupported;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.KeyStroke;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.ActionMap;
+import javax.swing.InputMap;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
 
-public class EntryScreen implements ActionListener
+public class EntryScreen extends JFrame implements ActionListener, KeyListener
 {
     DatabaseConnector database;
     JFrame frame;
@@ -22,10 +36,15 @@ public class EntryScreen implements ActionListener
     String codeName;
     String team;
     boolean exists;
+    Action exit;
+    Action submit;
+    static ArrayList<Integer> info = new ArrayList<Integer>();
 
 
     EntryScreen()
     {
+        exit = new Exit();
+        submit = new Submit();
         gameState = 0;
         startGame = false;
         exists = false;
@@ -45,10 +64,22 @@ public class EntryScreen implements ActionListener
         button = new JButton("Submit");
         // button.setBounds(10,80,80,25);
         // panel.add(button);
+        
+
         this.frame.setSize(350, 200);
         this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.addKeyListener(this);
         this.frame.setVisible(true);
         this.frame.add(this.panel);
+
+        InputMap iMap = panel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+
+        iMap.put(KeyStroke.getKeyStroke("F3"), "exit");
+        panel.getActionMap().put("exit", exit);
+        iMap.put(KeyStroke.getKeyStroke("\t"), "submit");
+        panel.getActionMap().put("submit", submit);
+        
+
 
         this.panel.add(this.label);
 
@@ -63,7 +94,62 @@ public class EntryScreen implements ActionListener
         this.enterID();
     }
 
+    public class Exit extends AbstractAction
+    {
+        @Override
+        public void actionPerformed(ActionEvent e)
+        {
+            System.out.println("f3");
+            gameState = 5;
+            update();
+        }
+
+    }
+
+    public class Submit extends AbstractAction
+    {
+        @Override
+        public void actionPerformed(ActionEvent e)
+        {
+            System.out.println("tab");
+            update();
+        }
+
+    }
+
+    
+
+    public void keyTyped(KeyEvent e)
+    {
+
+    }
+
+    public void keyPressed(KeyEvent e)
+    {
+
+    }
+
+    public void keyReleased(KeyEvent e)
+    {
+        if(e.getKeyCode() == KeyEvent.VK_F3)
+        {
+            System.out.println("f3 pressed");
+            this.gameState = 5;
+            update();
+        }
+        else if(e.getKeyCode() == KeyEvent.VK_TAB)
+        {
+            System.out.println("tab pressed");
+            update();
+        }
+    }
+
     public void actionPerformed(ActionEvent e)
+    {
+        update();
+    }
+
+    public void update()
     {
         System.out.println("Button Pressed");
         
@@ -149,6 +235,7 @@ public class EntryScreen implements ActionListener
                 try
                 {
                     this.equipID = Integer.parseInt(this.iDText.getText());
+                    info.add(equipID);
                     this.enterTeam();
                     //this.gameState = 0;
                 }
@@ -167,7 +254,7 @@ public class EntryScreen implements ActionListener
 
                     if(!(this.team.toLowerCase().equals("red")) && !(this.team.toLowerCase().equals("green")))
                     {
-                        System.out.println("Enter red or green");
+                        System.out.println("Enter red or green" + this.team.toLowerCase());
                         this.gameState = 3;
                     }
                     else
@@ -188,7 +275,7 @@ public class EntryScreen implements ActionListener
                 }
                 catch(NumberFormatException exc)
                 {
-                    System.out.println("Enter red or green");
+                    System.out.println("Enter red or green exception");
                     this.iDText.setText("");
                     this.gameState = 3;
                 }
@@ -196,6 +283,21 @@ public class EntryScreen implements ActionListener
 
         //}
         database.disconnect();
+
+        try
+        {
+            baseClient();
+        }
+        catch(IOException e1)
+        {
+            e1.printStackTrace();
+        }
+        System.out.println(this.gameState);
+
+        if(this.gameState == 6)
+        {
+            System.exit(0);
+        }
     }
 
     public void enterID()
@@ -259,8 +361,47 @@ public class EntryScreen implements ActionListener
         //this.panel.add(this.iDText);
     }
 
-    public static void main(String[] args)
-    {
-        EntryScreen entryScreen = new EntryScreen();
-    }
+    public static void baseClient() throws IOException
+	{
+		// Step 1:Create the socket object for
+		// carrying the data.
+		DatagramSocket ds = new DatagramSocket();
+
+		InetAddress ip = InetAddress.getLocalHost();
+		byte buf[] = null;
+
+		// loop while user not enters "bye"
+		//for loop to iterate through all elements in the arrayList
+		for (int i = 0; i < info.size(); i++)
+		{
+            System.out.println("loop");
+			//loops over all elements in the arrayList
+			//System.out.println(info.get(i));
+			
+			//String will take the input of whatever is in the arrayList at i
+			int inp = info.get(i);
+			//System.out.println("This is inp: " + inp);
+			// convert the String input into the byte array.
+			buf = ByteBuffer.allocate(Integer.BYTES).putInt(inp).array();
+			// Step 2 : Create the datagramPacket for sending
+			// the data.
+			//System.out.println("This is buf: " + buf);
+			DatagramPacket DpSend =
+				new DatagramPacket(buf, buf.length, ip, 7500);
+
+			// Step 3 : invoke the send call to actually send
+			// the data.
+			ds.send(DpSend);
+		}
+		
+
+		// break the loop if user enters "bye"
+		//if (inp.equals("bye"))
+		
+	}
+
+    // public static void main(String[] args)
+    // {
+    //     EntryScreen entryScreen = new EntryScreen();
+    // }
 }
