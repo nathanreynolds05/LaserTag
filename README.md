@@ -8,7 +8,7 @@ Run "javac \*java", then "java -cp ".;lib/* Main"
 
 USAGE INSTRUCTIONS
 -
-To add players, follow the prompts that appear after the splash screen. Once you have finished entering players, hit the f3 key to broadcast equipment codes.
+To add players, follow the prompts that appear after the splash screen. Once you have finished entering players, hit the f3 key to exit the program.
 
 TEAM MEMBERS
 -
