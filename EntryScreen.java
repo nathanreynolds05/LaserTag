@@ -164,7 +164,7 @@ public class EntryScreen extends JFrame implements ActionListener, KeyListener
         //     }
         // }
         this.database.connect();
-        System.out.println("test");
+        //System.out.println("test");
         // if(database.willConflict(player))
         // {
         //     System.out.println("Player has been added to the game");
