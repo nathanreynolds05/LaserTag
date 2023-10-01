@@ -3,8 +3,8 @@
 INSTALLATION INSTRUCTIONS
 -
 Requires Java.  
-Download LaserTag.zip, then unzip in a directory of your choice. Navigate to that directory and run Java Main.  
-If you get an error about a missing driver, it likely is because your java instance is not finding the .jar in lib.
+Pull from the repository, then compile and run in your favorite java setup. 
+This program requires the postgresql-42.6.0.jar file found in the lib directory. Make sure to add it to your class path.  
 
 USAGE INSTRUCTIONS
 -
