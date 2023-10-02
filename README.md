@@ -4,7 +4,9 @@ INSTALLATION INSTRUCTIONS
 -
 Requires Java.  
 Pull from the repository and navigate to the directory you've placed it in.  
-Run "javac \*java", then "java -cp ".;lib/* Main"
+Run:  
+> javac \*java  
+> java -cp ".;lib/*" Main  
 
 USAGE INSTRUCTIONS
 -
